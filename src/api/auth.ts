@@ -4,6 +4,7 @@
   import bcrypt from "bcrypt";
   import jwt from "jsonwebtoken"
   import { JsonWebTokenError } from "jsonwebtoken";
+import { error } from "node:console";
 
   interface LoginBody {
     username?: string;
@@ -13,6 +14,12 @@
   }
 
   interface RegisterBody {
+    username?: string;
+    email?: string;
+    password?: string;
+  }
+
+  interface LogoutBody{
     username?: string;
     email?: string;
     password?: string;
@@ -48,8 +55,26 @@
         return res.status(501).json({error:e.message})
     }
   });
-  router.post("/logout", async function (params) {});
+ 
+ 
+ 
+ 
+  router.post("/logout", async function (req: Request, res: Response) {
+    res.clearCookie("access_Token", { 
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax", 
+      path: "/"
 
+    })
+
+    return res.status(200).json({ message: "logout is done" });
+  });
+
+  
+  
+  
+  
   router.post(
   "/register",
   async (req: Request<{}, {}, RegisterBody>, res: Response) => {
