@@ -1,6 +1,5 @@
-"use strict";
 // import { Pool } from "pg";
-Object.defineProperty(exports, "__esModule", { value: true });
+
 // const pool = new Pool({
 //   user: "postgres",
 //   host: "localhost",
@@ -25,8 +24,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 //     console.log("ошибка", e);
 //   }
 // };
+
 // createTable();
+
 // export { pool };
-const client_1 = require("./generated/prisma/client");
-const prisma = new client_1.PrismaClient();
-exports.default = prisma;
+
+import { PrismaClient } from "./generated/prisma";
+const prisma = new PrismaClient();
+export default prisma;

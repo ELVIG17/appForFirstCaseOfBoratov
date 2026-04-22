@@ -27,7 +27,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/posts", postsRouter);
 app.use("/api/messages", messagesRouter);
 
-const PORT = Number(process.env.PORT ?? 3000);
+const PORT = Number.parseInt(process.env.PORT ?? "3000", 10);
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
