@@ -14,7 +14,7 @@ interface UserPayLoad {
 
 export function jwtMiddleWare  (req: Request, res: Response, next: NextFunction )  {
 
-    const token = req.cookies.accessToken
+    const token = req.cookies.access_token
 
     if(token === undefined){
         return res.status(401).json({ message: "Unauthorized" })
