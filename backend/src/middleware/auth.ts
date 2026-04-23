@@ -1,40 +1,33 @@
-import { NextFunction } from "express";
-import { Request, Response, } from "express";
-import { Jwt, JwtPayload, Secret } from "jsonwebtoken";
-import jwt from "jsonwebtoken"
-import { error } from "node:console";
-import { appendFile } from "node:fs";
+import { Request, Response, NextFunction } from "express";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 
-const Jwt_SECRET: Secret = process.env.JWT_SECRET || 'super-secret-key'
+const JWT_SECRET: Secret = process.env.JWT_SECRET || 'super-secret-key';
 
-interface UserPayLoad {
-    id: number;
-    email:string;
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: number;
+      };
+    }
+  }
 }
 
-export function jwtMiddleWare  (req: Request, res: Response, next: NextFunction )  {
+export function jwtMiddleWare(req: Request, res: Response, next: NextFunction) {
+  const token = req.cookies.access_token;
 
-    const token = req.cookies.access_token
+  if (token === undefined) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
-    if(token === undefined){
-        return res.status(401).json({ message: "Unauthorized" })
-    }
-
-
-        try {
-            const userId = jwt.verify(token, Jwt_SECRET) as JwtPayload
-            req.user = {id: userId.id}
-            next()
-
-        }
-
-        catch (error){
-            console.error("Оибка проверки токенва ", error)
-            return res.status(401).json({ message: "Unauthorized: Invalid token" })
-            
-        }
-
-        return next()
-    }
-
-
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    
+    // ИСПРАВЛЕНО: используем userId как в JWT токене
+    req.user = { id: decoded.userId };
+    next();
+  } catch (error) {
+    console.error("Token verification error:", error);
+    return res.status(401).json({ message: "Unauthorized: Invalid token" });
+  }
+}
